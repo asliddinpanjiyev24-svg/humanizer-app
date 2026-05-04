@@ -13,12 +13,12 @@ api_key = st.text_input("Enter your Gemini API Key:", type="password")
 if api_key:
     genai.configure(api_key=api_key)
 
-    # 3. The Backend "Chaos" Settings to beat GPTZero
+   # 3. The Backend "Chaos" Settings to beat GPTZero
     generation_config = {
-        "temperature": 1.5, # Max randomness
+        "temperature": 1.1, # Lowered slightly so it doesn't lose focus
         "top_p": 0.9,
         "top_k": 40,
-        "max_output_tokens": 2048,
+        "max_output_tokens": 8192, # Max limit to ensure it finishes long texts
     }
 
     # Initialize the model
@@ -36,6 +36,7 @@ if api_key:
     3. Extreme Structural Chaos: Shatter standard paragraph structures. Have one dense, 6-sentence paragraph followed by a single, blunt, 5-word sentence. Force at least one comma splice per output. 
     4. Stylistic Imperfections: Use an em-dash (—) to interrupt your own thought. Occasionally use passive voice awkwardly. 
     5. Strict Data Protection: Never alter factual definitions, macroeconomic terminology, or legal doctrines. Leave all citations, bibliographies, and alphabetical sorting entirely untouched.
+    6. CRITICAL RULE: You must rewrite the ENTIRE text provided by the user from beginning to end. Do not stop halfway through.
     """
 
     # 5. The User Interface
