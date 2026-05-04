@@ -7,11 +7,9 @@ st.set_page_config(page_title="AI Humanizer Pro", page_icon="📝", layout="cent
 st.title("📝 The Humanizer App")
 st.write("Paste your text below to bypass AI detectors.")
 
-# 2. Securely input the API Key
-api_key = st.text_input("Enter your Gemini API Key:", type="password")
-
-if api_key:
-    genai.configure(api_key=api_key)
+# 2. Pull the key invisibly from the server's secure vault
+api_key = st.secrets["GEMINI_API_KEY"]
+genai.configure(api_key=api_key)
 
    # 3. The Backend "Chaos" Settings to beat GPTZero
     generation_config = {
@@ -56,5 +54,4 @@ if api_key:
                     st.error(f"An error occurred: {e}")
         else:
             st.warning("Please paste some text first.")
-else:
-    st.info("Please enter your API key to unlock the humanizer.")
+
