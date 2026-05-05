@@ -59,11 +59,6 @@ st.warning(t["rate_warning"])
 api_key = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=api_key)
 
-# --- ADD THESE TWO LINES HERE ---
-model_names = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-st.write("Available models on your account:", model_names)
-# --------------------------------
-
 # 5. The Backend "Chaos" Settings
 generation_config = {
     "temperature": 1.1, 
@@ -72,9 +67,9 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
-# Initialize the model (Updated to Gemini 3.1 Flash Lite)
+# Initialize the model (Updated with the exact string you found)
 model = genai.GenerativeModel(
-    model_name="gemini-2.5-flash-lite",
+    model_name="gemini-3.1-flash-lite-preview",
     generation_config=generation_config,
 )
 
