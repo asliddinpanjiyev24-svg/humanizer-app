@@ -69,7 +69,7 @@ generation_config = {
 
 # Initialize the model (Updated to Gemini 3.1 Flash Lite)
 model = genai.GenerativeModel(
-    model_name="gemini-3.1-flash-lite",
+    model_name="gemini-2.5-flash-lite",
     generation_config=generation_config,
 )
 
