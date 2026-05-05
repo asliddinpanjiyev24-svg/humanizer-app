@@ -67,9 +67,9 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
-# Initialize the model
+# Initialize the cheapest model available to bypass strict daily limits
 model = genai.GenerativeModel(
-    model_name="gemini-2.5-flash",
+    model_name="gemini-2.5-flash-lite",
     generation_config=generation_config,
 )
 
