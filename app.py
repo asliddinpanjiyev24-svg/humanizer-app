@@ -10,7 +10,7 @@ ui_texts = {
         "title": "📝 The Humanizer App",
         "subtitle": "Paste your text below to bypass AI detectors.",
         "word_warning": "⚠️ **Note:** For optimal efficiency, please do not paste more than 2,000 words.",
-        "rate_warning": "⏱️ **Rate Limit Notice:** If too many people are using it at the same time (more than 20 requests per minute), the app might give an error message. Don't worry, just wait for a minute and retry.",
+        "rate_warning": "⏱️ **Rate Limit Notice:** If you hit a limit, please wait a minute and retry.",
         "input_label": "Original Text:",
         "button": "Humanize Text",
         "spinner": "Rewriting... injecting human chaos...",
@@ -22,7 +22,7 @@ ui_texts = {
         "title": "📝 Приложение Humanizer",
         "subtitle": "Вставьте текст ниже, чтобы обойти ИИ-детекторы.",
         "word_warning": "⚠️ **Примечание:** Для обеспечения эффективности, пожалуйста, не вставляйте более 2000 слов.",
-        "rate_warning": "⏱️ **Лимит запросов:** Если приложением одновременно пользуется слишком много людей (более 20 запросов в минуту), может возникнуть ошибка. Не волнуйтесь, просто подождите минуту и попробуйте снова.",
+        "rate_warning": "⏱️ **Лимит запросов:** Если возникнет ошибка, подождите минуту и попробуйте снова.",
         "input_label": "Оригинальный текст:",
         "button": "Гуманизировать текст",
         "spinner": "Переписывание... добавление человеческого хаоса...",
@@ -34,7 +34,7 @@ ui_texts = {
         "title": "📝 Humanizer Ilovasi",
         "subtitle": "AI detektorlarini aylanib o'tish uchun matningizni pastga joylashtiring.",
         "word_warning": "⚠️ **Eslatma:** Samaradorlikni ta'minlash uchun 2000 so'zdan ortiq matn kiritmang.",
-        "rate_warning": "⏱️ **So'rovlar chegarasi:** Agar ilovadan bir vaqtning o'zida juda ko'p odam foydalansa (daqiqasiga 20 ta so'rovdan ortiq), ilova xato xabarini berishi mumkin. Xavotir olmang, bir daqiqa kuting va qayta urinib ko'ring.",
+        "rate_warning": "⏱️ **So'rovlar chegarasi:** Agar xato yuz bersa, bir daqiqa kuting va qayta urinib ko'ring.",
         "input_label": "Asl matn:",
         "button": "Matnni insoniylashtirish",
         "spinner": "Qayta yozilmoqda... insoniy tartibsizlik qo'shilmoqda...",
@@ -44,61 +44,51 @@ ui_texts = {
     }
 }
 
-# 3. Language Selector
 selected_lang = st.selectbox("🌐 Select Language / Выберите язык / Tilni tanlang:", ["English", "Русский", "O'zbekcha"])
 t = ui_texts[selected_lang]
 
-# Render UI headers and warnings
 st.title(t["title"])
 st.write(t["subtitle"])
-
 st.info(t["word_warning"])
 st.warning(t["rate_warning"])
 
-# 4. API Configuration
 api_key = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=api_key)
 
-# 5. Backend "Chaos" Settings
-generation_config = {
-    "temperature": 1.1, 
-    "top_p": 0.9,
-    "top_k": 40,
-    "max_output_tokens": 8192,
-}
-
+# Using Gemini 1.5 Flash for better "Human" nuance vs. Lite
 model = genai.GenerativeModel(
-    model_name="gemini-2.5-flash-lite",
-    generation_config=generation_config,
+    model_name="gemini-1.5-flash",
+    generation_config={
+        "temperature": 1.2, # Slightly higher for more randomness
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+    },
 )
 
-# 6. The Master System Prompt
+# 6. Refined Master System Prompt
 system_prompt = f"""
-You are an intelligent but exhausted final-year university student rewriting a draft. Your sole objective is to make the provided text read naturally and pass as 100% human-written on strict detectors like GPTZero.
+You are an intelligent but exhausted final-year university student rewriting a draft. Your sole objective is to make the provided text read naturally and pass as 100% human-written on strict detectors.
 
-1. The "Real-Time Translation" Hack: Write as if you are mentally translating complex technical concepts from a foreign language into {t['target_lang']} in real-time. Use slightly unconventional syntax and unexpected word choices. 
-2. Lexical Purge: BANNED WORDS: delve, robust, tapestry, crucial, furthermore, consequently, multifaceted, ever-evolving, paradigm, testament, intricate, vital, underscore, realm, foster, align, compelling, navigate, landscape. Use conversational links like 'The thing is', 'Actually'.
-3. Extreme Structural Chaos: Shatter standard paragraph structures. Have one dense, 6-sentence paragraph followed by a single, blunt, 5-word sentence. Force at least one comma splice per output. 
-4. Stylistic Imperfections: Use an em-dash (—) to interrupt your own thought. Occasionally use passive voice awkwardly. 
-5. Strict Data Protection: Never alter factual definitions, macroeconomic terminology, or legal doctrines. Leave all citations, bibliographies, and alphabetical sorting entirely untouched.
-6. NO CHATTER: Do not explain your process, do not say "Here is the rewrite," and do not provide any introductory remarks. Provide ONLY the transformed text.
-7. CRITICAL RULE: You must rewrite the ENTIRE text provided by the user from beginning to end in {t['target_lang']}.
+1. PERPLEXITY & BURSTINESS: Humans vary their sentence length and word choice unpredictably. Mix very long, complex sentences with short, punchy ones. Use "low-frequency" synonyms occasionally.
+2. The "Real-Time Translation" Hack: Write as if you are mentally translating from a foreign language into {t['target_lang']}. Use slightly unconventional (but correct) syntax.
+3. Lexical Purge: STICK TO THE BANNED WORDS LIST. NEVER use: delve, robust, tapestry, crucial, furthermore, consequently, multifaceted, ever-evolving, paradigm, testament, intricate, vital, underscore, realm, foster, align, compelling, navigate, landscape. Use 'Basically', 'The thing is', 'Actually' instead.
+4. Stylistic Imperfections: Use an em-dash (—) to interrupt yourself. Use "I mean" or "think about it" to create a conversational flow. 
+5. NO CHATTER: Do not explain yourself. Do not say "Here is the rewrite." Provide ONLY the text.
+6. DATA PROTECTION: Never alter factual definitions, legal doctrines, or citations. Keep bibliographies and alphabetical sorting exactly as they are.
+7. CRITICAL: Rewrite the ENTIRE text from start to finish in {t['target_lang']}.
 """
 
-# 7. The User Interface
 user_input = st.text_area(t["input_label"], height=200)
 
 if st.button(t["button"]):
     if user_input:
         with st.spinner(t["spinner"]):
             try:
-                full_prompt = f"{system_prompt}\n\nHere is the text to rewrite:\n{user_input}"
+                full_prompt = f"{system_prompt}\n\nTEXT TO REWRITE:\n{user_input}"
                 response = model.generate_content(full_prompt)
-                
                 st.subheader(t["output_label"])
-                # Using st.code to provide the built-in copy button
                 st.code(response.text, language=None)
-                
             except Exception as e:
                 st.error(f"An error occurred: {e}")
     else:
