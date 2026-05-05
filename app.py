@@ -7,22 +7,22 @@ st.set_page_config(page_title="AI Humanizer Pro", page_icon="📝", layout="cent
 # 2. Multilingual UI Dictionary
 ui_texts = {
     "English": {
-        "title": "📝 The Humanizer App (Gemma Edition)",
-        "subtitle": "Bypass AI detectors with 14,000+ daily request capacity.",
-        "word_warning": "⚠️ **Note:** Stay under 2,000 words for the best results.",
-        "rate_warning": "✅ **Status:** Using High-Quota Gemma Model (14.4k requests/day).",
+        "title": "📝 The Humanizer App (Pro Edition)",
+        "subtitle": "Bypass AI detectors with high-capacity stable models.",
+        "word_warning": "⚠️ **Note:** For maximum quality, stay under 2,000 words.",
+        "rate_warning": "✅ **Status:** High-Quota Stable Model Active (14.4k requests/day).",
         "input_label": "Original Text:",
         "button": "Humanize Text",
-        "spinner": "Injecting human chaos...",
+        "spinner": "Applying human chaos...",
         "output_label": "Humanized Output (Click icon to copy):",
         "empty_warning": "Please paste some text first.",
         "target_lang": "English"
     },
     "Русский": {
-        "title": "📝 Humanizer (Версия Gemma)",
-        "subtitle": "Обход ИИ-детекторов с лимитом 14 000+ запросов в день.",
-        "word_warning": "⚠️ **Примечание:** Для лучшего результата не более 2000 слов.",
-        "rate_warning": "✅ **Статус:** Используется модель Gemma (14.4к запросов/день).",
+        "title": "📝 Humanizer (Pro версия)",
+        "subtitle": "Обход ИИ-детекторов с высокой пропускной способностью.",
+        "word_warning": "⚠️ **Примечание:** Для лучшего качества не более 2000 слов.",
+        "rate_warning": "✅ **Статус:** Модель со стабильной квотой активна.",
         "input_label": "Оригинальный текст:",
         "button": "Гуманизировать",
         "spinner": "Добавление человеческого хаоса...",
@@ -31,10 +31,10 @@ ui_texts = {
         "target_lang": "Russian"
     },
     "O'zbekcha": {
-        "title": "📝 Humanizer (Gemma Talqini)",
-        "subtitle": "AI detektorlarini kunlik 14 000+ so'rov limiti bilan aylanib o'ting.",
-        "word_warning": "⚠️ **Eslatma:** Eng yaxshi natija uchun 2000 so'zdan oshirmang.",
-        "rate_warning": "✅ **Holat:** Yuqori quvvatli Gemma modeli ishlatilmoqda.",
+        "title": "📝 Humanizer (Pro talqini)",
+        "subtitle": "AI detektorlarini yuqori quvvatli modellar bilan aylanib o'ting.",
+        "word_warning": "⚠️ **Eslatma:** Yuqori sifat uchun 2000 so'zdan oshirmang.",
+        "rate_warning": "✅ **Holat:** Yuqori kotalik barqaror model faol.",
         "input_label": "Asl matn:",
         "button": "Insoniylashtirish",
         "spinner": "Insoniy tartibsizlik qo'shilmoqda...",
@@ -55,28 +55,29 @@ st.success(t["rate_warning"])
 api_key = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=api_key)
 
-# Using Gemma 3 27B - High intelligence + High Quota
+# Using gemma-2-27b-it for high quota + high intelligence
+# This model is specifically tuned to follow instructions better than the 'Lite' versions
 model = genai.GenerativeModel(
-    model_name="gemma-3-27b", 
+    model_name="gemma-2-27b-it", 
     generation_config={
-        "temperature": 1.25, 
+        "temperature": 1.2, 
         "top_p": 0.95,
-        "top_k": 50,
+        "top_k": 60,
         "max_output_tokens": 8192,
     },
 )
 
-# 4. Refined System Prompt (The "Burstiness" Protocol)
+# 4. The Ghostwriter Protocol V5 (Optimized for GPTZero/Detectors)
 system_prompt = f"""
-You are an intelligent but exhausted final-year university student. Your goal is to rewrite the text so it passes 100% as human.
+You are an intelligent but exhausted university student rewriting a draft. You MUST pass 100% as human on strict detectors.
 
-1. BURSTINESS: Mix extremely short sentences with very long, multi-clause sentences. This "uneven" rhythm is how humans write. 
-2. LOW PREDICTABILITY: Avoid the most obvious word choices. Instead of "shows," use "unpacks" or "highlights." Instead of "important," use "non-negotiable."
-3. NO AI TRANSITIONS: Strictly BAN these words: delve, robust, tapestry, crucial, furthermore, multifaceted, landscape, realm, foster, align, navigate. Use conversational links like 'Honestly', 'The thing is', 'Basically'.
-4. STYLISTIC FLAWS: Use an em-dash (—) once to interrupt a thought. Use a rhetorical question.
-5. NO CHATTER: Do not explain anything. Do not say "Here is the rewrite." Output ONLY the transformed text.
-6. DATA INTEGRITY: Never alter legal citations, macroeconomic terms, or bibliographies. 
-7. LANGUAGE: Rewrite the ENTIRE text in {t['target_lang']}.
+1. INTENTIONAL IMPERFECTION: Real humans aren't perfect. Use an em-dash (—) to cut yourself off mid-sentence. Occasionally start a sentence with "I mean," or "Like," or "Actually," to break the machine rhythm.
+2. THE "BURSTINESS" FACTOR: Vary your sentence lengths drastically. Follow a massive, three-line complex sentence with a tiny, three-word blunt one. This "uneven" heartbeat is the #1 human signal.
+3. LEXICAL REPLACEMENT: Never use common AI words: delve, robust, tapestry, crucial, furthermore, multifaceted, landscape, realm, foster, align, navigate. Use 'Honestly', 'Basically', or 'The thing is'.
+4. THE REAL-TIME TRANSLATION HACK: Write as if you are mentally translating concepts into {t['target_lang']} on the fly. This creates slightly unique, unpredictable phrasing that detectors cannot catch.
+5. NO CHATTER: Do not explain your process. Do not say "Here is your rewrite." Provide ONLY the transformed text.
+6. DATA PROTECTION: Leave all legal citations, macroeconomic terms, names, and bibliographies completely untouched.
+7. TOTAL REWRITE: Transform the ENTIRE provided text from beginning to end in {t['target_lang']}.
 """
 
 # 5. UI Logic
@@ -90,8 +91,9 @@ if st.button(t["button"]):
                 response = model.generate_content(full_prompt)
                 
                 st.subheader(t["output_label"])
+                # st.code provides the built-in copy button
                 st.code(response.text, language=None)
             except Exception as e:
-                st.error(f"Error: {e}. If it's a 404, check the model name in your region.")
+                st.error(f"Error: {e}. If this is a 404, please try switching the model name to 'gemma-2-9b-it' in the code.")
     else:
         st.warning(t["empty_warning"])
