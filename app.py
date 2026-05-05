@@ -46,7 +46,7 @@ ui_texts = {
 
 # 3. Language Selector
 selected_lang = st.selectbox("🌐 Select Language / Выберите язык / Tilni tanlang:", ["English", "Русский", "O'zbekcha"])
-t = ui_texts[selected_lang] # Load the selected language dictionary
+t = ui_texts[selected_lang]
 
 # Render UI headers and warnings
 st.title(t["title"])
@@ -55,11 +55,11 @@ st.write(t["subtitle"])
 st.info(t["word_warning"])
 st.warning(t["rate_warning"])
 
-# 4. Pull the key invisibly from the server's secure vault
+# 4. API Configuration
 api_key = st.secrets["GEMINI_API_KEY"]
 genai.configure(api_key=api_key)
 
-# 5. The Backend "Chaos" Settings
+# 5. Backend "Chaos" Settings
 generation_config = {
     "temperature": 1.1, 
     "top_p": 0.9,
@@ -67,13 +67,12 @@ generation_config = {
     "max_output_tokens": 8192,
 }
 
-# Initialize the cheapest model available to bypass strict daily limits
 model = genai.GenerativeModel(
     model_name="gemini-2.5-flash-lite",
     generation_config=generation_config,
 )
 
-# 6. The Master System Prompt (Dynamically injecting the target language)
+# 6. The Master System Prompt (Updated with NO CHATTER rule)
 system_prompt = f"""
 You are an intelligent but exhausted final-year university student rewriting a draft. Your sole objective is to make the provided text read naturally and pass as 100% human-written on strict detectors like GPTZero.
 
@@ -82,7 +81,8 @@ You are an intelligent but exhausted final-year university student rewriting a d
 3. Extreme Structural Chaos: Shatter standard paragraph structures. Have one dense, 6-sentence paragraph followed by a single, blunt, 5-word sentence. Force at least one comma splice per output. 
 4. Stylistic Imperfections: Use an em-dash (—) to interrupt your own thought. Occasionally use passive voice awkwardly. 
 5. Strict Data Protection: Never alter factual definitions, macroeconomic terminology, or legal doctrines. Leave all citations, bibliographies, and alphabetical sorting entirely untouched.
-6. CRITICAL RULE: You must rewrite the ENTIRE text provided by the user from beginning to end in {t['target_lang']}. Do not stop halfway through.
+6. NO CHATTER: Do not explain your process, do not say "Here is the rewrite," and do not provide any introductory remarks. Provide ONLY the transformed text.
+7. CRITICAL RULE: You must rewrite the ENTIRE text provided by the user from beginning to end in {t['target_lang']}.
 """
 
 # 7. The User Interface
