@@ -14,7 +14,7 @@ ui_texts = {
         "input_label": "Original Text:",
         "button": "Humanize Text",
         "spinner": "Rewriting... injecting human chaos...",
-        "output_label": "Humanized Output:",
+        "output_label": "Humanized Output (Click the icon on the right to copy):",
         "empty_warning": "Please paste some text first.",
         "target_lang": "English"
     },
@@ -26,7 +26,7 @@ ui_texts = {
         "input_label": "Оригинальный текст:",
         "button": "Гуманизировать текст",
         "spinner": "Переписывание... добавление человеческого хаоса...",
-        "output_label": "Гуманизированный результат:",
+        "output_label": "Результат (Нажмите на иконку справа, чтобы скопировать):",
         "empty_warning": "Пожалуйста, сначала вставьте текст.",
         "target_lang": "Russian"
     },
@@ -38,7 +38,7 @@ ui_texts = {
         "input_label": "Asl matn:",
         "button": "Matnni insoniylashtirish",
         "spinner": "Qayta yozilmoqda... insoniy tartibsizlik qo'shilmoqda...",
-        "output_label": "Insoniylashtirilgan natija:",
+        "output_label": "Natija (Nusxa olish uchun o'ngdagi belgini bosing):",
         "empty_warning": "Iltimos, avval matnni kiriting.",
         "target_lang": "Uzbek"
     }
@@ -72,12 +72,12 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
-# 6. The Master System Prompt (Updated with NO CHATTER rule)
+# 6. The Master System Prompt
 system_prompt = f"""
 You are an intelligent but exhausted final-year university student rewriting a draft. Your sole objective is to make the provided text read naturally and pass as 100% human-written on strict detectors like GPTZero.
 
 1. The "Real-Time Translation" Hack: Write as if you are mentally translating complex technical concepts from a foreign language into {t['target_lang']} in real-time. Use slightly unconventional syntax and unexpected word choices. 
-2. Lexical Purge: BANNED WORDS: delve, robust, tapestry, crucial, furthermore, consequently, multifaceted, ever-evolving, paradigm, testament, intricate, vital, underscore, realm, foster, align, compelling, navigate, landscape. Use conversational links like 'The thing is', 'Actually' (or their equivalent in {t['target_lang']}).
+2. Lexical Purge: BANNED WORDS: delve, robust, tapestry, crucial, furthermore, consequently, multifaceted, ever-evolving, paradigm, testament, intricate, vital, underscore, realm, foster, align, compelling, navigate, landscape. Use conversational links like 'The thing is', 'Actually'.
 3. Extreme Structural Chaos: Shatter standard paragraph structures. Have one dense, 6-sentence paragraph followed by a single, blunt, 5-word sentence. Force at least one comma splice per output. 
 4. Stylistic Imperfections: Use an em-dash (—) to interrupt your own thought. Occasionally use passive voice awkwardly. 
 5. Strict Data Protection: Never alter factual definitions, macroeconomic terminology, or legal doctrines. Leave all citations, bibliographies, and alphabetical sorting entirely untouched.
@@ -96,7 +96,9 @@ if st.button(t["button"]):
                 response = model.generate_content(full_prompt)
                 
                 st.subheader(t["output_label"])
-                st.write(response.text)
+                # Using st.code to provide the built-in copy button
+                st.code(response.text, language=None)
+                
             except Exception as e:
                 st.error(f"An error occurred: {e}")
     else:
